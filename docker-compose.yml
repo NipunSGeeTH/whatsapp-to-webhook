@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  whatsapp-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: whatsapp-bot
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - WEBHOOK_PORT=3000
+      - WEBHOOK_PATH=/webhook
+      - VERIFY_TOKEN=${VERIFY_TOKEN:-your-verify-token}
+      - FORWARD_WEBHOOK_URL=${FORWARD_WEBHOOK_URL:-}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      # Persist WhatsApp authentication session
+      - whatsapp_auth:/app/.wwebjs_auth
+      # Mount .env file (optional, use environment variables above)
+      # - .env:/app/.env
+      # Persist logs
+      - ./logs:/app/logs
+    restart: unless-stopped
+    # Extra hosts for webhook forwarding
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  whatsapp_auth:
+    driver: local

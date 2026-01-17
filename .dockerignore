@@ -1,0 +1,70 @@
+# Docker ignore file
+
+# Dependencies
+node_modules
+npm-debug.log
+pnpm-debug.log
+yarn-error.log
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE & Editor
+.vscode
+.idea
+*.swp
+*.swo
+*.iml
+.DS_Store
+
+# Git
+.git
+.gitignore
+
+# Build outputs
+dist
+build
+.next
+out
+
+# Logs
+logs
+*.log
+
+# Testing
+coverage
+.nyc_output
+.mocha-webpack
+test-results
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+README.md
+*.md
+docs
+
+# Examples
+examples
+
+# Tests
+tests
+*.test.js
+jest.config.js
+
+# Sessions (will be created in container)
+# .wwebjs_auth/
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
