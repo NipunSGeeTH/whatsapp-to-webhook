@@ -11,12 +11,76 @@ const forwardMessageToWebhook = async (message) => {
   }
 
   try {
+    // Determine if it's a group message
+    const isGroupChat = message.from.includes('@g.us');
+    const isBroadcast = message.broadcast || message.from.includes('@broadcast');
+
     const payload = {
+      // Basic Message Info
+      messageId: message.id?.id || message.id,
       from: message.from,
+      fromNumber: message.from.replace('@c.us', '').replace('@g.us', '').replace('@broadcast', ''),
+      to: message.to,
+      author: message.author || null,
+      
+      // Message Content
       body: message.body,
-      timestamp: message.timestamp,
       type: message.type,
+      
+      // Timestamps & Status
+      timestamp: message.timestamp,
+      ack: message.ack,
+      
+      // Chat Type Information
+      chat: {
+        id: message.from,
+        isGroup: isGroupChat,
+        isBroadcast: isBroadcast,
+        isPrivate: !isGroupChat && !isBroadcast,
+      },
+
+      // Message Metadata
+      fromMe: message.fromMe,
       hasMedia: message.hasMedia,
+      hasQuotedMsg: message.hasQuotedMsg,
+      hasReaction: message.hasReaction,
+      hasGroupMentions: message.groupMentions && message.groupMentions.length > 0,
+      
+      // Group Specific
+      participant: message.participant || null,
+      groupMentions: message.groupMentions || [],
+      mentionedIds: message.mentionedIds || [],
+      
+      // Message Properties
+      isForwarded: message.isForwarded,
+      isGif: message.isGif,
+      isStarred: message.isStarred,
+      isStatus: message.isStatus,
+      isEphemeral: message.isEphemeral,
+      
+      // Media & Attachments
+      mediaKey: message.mediaKey || null,
+      duration: message.duration || null,
+      
+      // Forwarding Info
+      forwardingScore: message.forwardingScore || 0,
+      
+      // Links & vCards
+      links: message.links || [],
+      vCards: message.vCards || [],
+      
+      // Location (if location message)
+      location: message.location || null,
+      
+      // Group Invites
+      inviteV4: message.inviteV4 || null,
+      
+      // Orders & Tokens
+      orderId: message.orderId || null,
+      token: message.token || null,
+      
+      // Device Type
+      deviceType: message.deviceType || null,
     };
 
     await axios.post(config.webhook.forwardUrl, payload, {
