@@ -1,4 +1,33 @@
 const { getClient } = require('./client');
+const config = require('../config');
+const axios = require('axios');
+
+/**
+ * Forward incoming message to external webhook
+ */
+const forwardMessageToWebhook = async (message) => {
+  if (!config.webhook.forwardUrl) {
+    return;
+  }
+
+  try {
+    const payload = {
+      from: message.from,
+      body: message.body,
+      timestamp: message.timestamp,
+      type: message.type,
+      hasMedia: message.hasMedia,
+    };
+
+    await axios.post(config.webhook.forwardUrl, payload, {
+      timeout: 5000,
+    });
+    
+    console.log('Message forwarded to webhook:', config.webhook.forwardUrl);
+  } catch (error) {
+    console.error('Error forwarding message to webhook:', error.message);
+  }
+};
 
 /**
  * Setup WhatsApp event listeners
@@ -13,6 +42,9 @@ const setupEventListeners = () => {
       body: msg.body,
       timestamp: msg.timestamp,
     });
+
+    // Forward message to external webhook
+    forwardMessageToWebhook(msg);
 
     // Emit custom event for message received
     client.emit('message:received', msg);

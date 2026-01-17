@@ -1,4 +1,9 @@
 const express = require('express');
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
+
 const config = require('./config');
 const { initializeWhatsApp, isClientReady } = require('./whatsapp/client');
 const { setupEventListeners } = require('./whatsapp/events');

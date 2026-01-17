@@ -5,6 +5,8 @@ module.exports = {
     port: process.env.WEBHOOK_PORT || 3000,
     path: process.env.WEBHOOK_PATH || '/webhook',
     verifyToken: process.env.VERIFY_TOKEN || 'your-verify-token',
+    // External webhook to forward incoming messages
+    forwardUrl: process.env.FORWARD_WEBHOOK_URL || null,
   },
 
   // WhatsApp Web.js configuration
