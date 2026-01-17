@@ -3,6 +3,7 @@ const config = require('../config');
 
 let client = null;
 let isReady = false;
+let currentQR = null;
 
 const initializeWhatsApp = () => {
   return new Promise((resolve, reject) => {
@@ -14,9 +15,15 @@ const initializeWhatsApp = () => {
         puppeteer: config.whatsapp.puppeteer,
       });
 
+      client.on('qr', async (qr) => {
+        console.log('QR Code received');
+        currentQR = qr;
+      });
+
       client.on('ready', () => {
         console.log('WhatsApp client is ready!');
         isReady = true;
+        currentQR = null;
         resolve(client);
       });
 
@@ -47,11 +54,16 @@ const getClient = () => {
 
 const isClientReady = () => isReady;
 
+const getQRCode = () => {
+  return currentQR;
+};
+
 const disconnectClient = async () => {
   if (client) {
     await client.destroy();
     client = null;
     isReady = false;
+    currentQR = null;
   }
 };
 
@@ -60,4 +72,5 @@ module.exports = {
   getClient,
   isClientReady,
   disconnectClient,
+  getQRCode,
 };

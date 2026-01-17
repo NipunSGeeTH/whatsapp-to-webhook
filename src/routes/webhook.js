@@ -1,8 +1,38 @@
 const express = require('express');
 const config = require('../config');
 const { sendTextMessage, sendMediaMessage } = require('../whatsapp/messageService');
+const { isClientReady, getQRCode } = require('../whatsapp/client');
 
 const router = express.Router();
+
+/**
+ * Get QR Code
+ */
+router.get('/qr', (req, res) => {
+  const qrCode = getQRCode();
+  if (qrCode) {
+    res.json({
+      success: true,
+      qrCode: qrCode,
+    });
+  } else {
+    res.status(404).json({
+      success: false,
+      message: 'QR code not available. Either already authenticated or not yet generated.',
+      ready: isClientReady(),
+    });
+  }
+});
+
+/**
+ * Health check endpoint
+ */
+router.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    whatsappReady: isClientReady(),
+  });
+});
 
 /**
  * Verify webhook token (for security)

@@ -25,18 +25,31 @@ app.use((err, req, res, next) => {
 // Initialize server
 const startServer = async () => {
   try {
-    console.log('Initializing WhatsApp client...');
-    await initializeWhatsApp();
-
-    console.log('Setting up event listeners...');
-    setupEventListeners();
-
     const PORT = config.webhook.port;
+    
+    // Start the server immediately
     app.listen(PORT, () => {
-      console.log(`Server started on port ${PORT}`);
-      console.log(`Webhook path: ${config.webhook.path}`);
-      console.log(`Health check: http://localhost:${PORT}/health`);
+      console.log('\n========================================');
+      console.log('✓ Server started successfully');
+      console.log('========================================');
+      console.log(`📌 Port: ${PORT}`);
+      console.log(`🌐 Server URL: http://localhost:${PORT}`);
+      console.log(`📱 QR Code URL: http://localhost:${PORT}/qr`);
+      console.log(`🔗 Webhook Path: http://localhost:${PORT}${config.webhook.path}`);
+      console.log(`💚 Health Check: http://localhost:${PORT}/health`);
+      console.log('========================================\n');
     });
+
+    // Initialize WhatsApp in background
+    console.log('Initializing WhatsApp client...');
+    initializeWhatsApp()
+      .then(() => {
+        console.log('Setting up event listeners...');
+        setupEventListeners();
+      })
+      .catch((error) => {
+        console.error('Failed to initialize WhatsApp client:', error);
+      });
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);
