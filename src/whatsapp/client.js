@@ -1,5 +1,5 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const config = require('./config');
+const config = require('../config');
 
 let client = null;
 let isReady = false;
