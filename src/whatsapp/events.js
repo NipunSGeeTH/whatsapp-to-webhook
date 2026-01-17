@@ -15,6 +15,33 @@ const forwardMessageToWebhook = async (message) => {
     const isGroupChat = message.from.includes('@g.us');
     const isBroadcast = message.broadcast || message.from.includes('@broadcast');
 
+    // Download media if available and not larger than 10MB
+    let mediaData = null;
+    const MAX_MEDIA_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+
+    if (message.hasMedia) {
+      try {
+        const media = await message.downloadMedia();
+        
+        // Calculate actual size from base64 data
+        const mediaSize = Buffer.byteLength(media.data, 'base64');
+        
+        if (mediaSize <= MAX_MEDIA_SIZE) {
+          mediaData = {
+            mimetype: media.mimetype,
+            data: media.data, // Base64 encoded data
+            filename: media.filename || null,
+            size: mediaSize,
+          };
+          console.log(`Media downloaded: ${(mediaSize / 1024 / 1024).toFixed(2)}MB`);
+        } else {
+          console.log(`Media skipped: ${(mediaSize / 1024 / 1024).toFixed(2)}MB (exceeds 10MB limit)`);
+        }
+      } catch (error) {
+        console.error('Error downloading media:', error.message);
+      }
+    }
+
     const payload = {
       // Basic Message Info
       messageId: message.id?.id || message.id,
@@ -42,6 +69,7 @@ const forwardMessageToWebhook = async (message) => {
       // Message Metadata
       fromMe: message.fromMe,
       hasMedia: message.hasMedia,
+      media: mediaData,
       hasQuotedMsg: message.hasQuotedMsg,
       hasReaction: message.hasReaction,
       hasGroupMentions: message.groupMentions && message.groupMentions.length > 0,
