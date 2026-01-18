@@ -122,6 +122,35 @@ const forwardMessageToWebhook = async (message) => {
 };
 
 /**
+ * Forward message acknowledgment to external webhook
+ */
+const forwardAckToWebhook = async (message, ack) => {
+  if (!config.webhook.forwardUrl) {
+    return;
+  }
+
+  try {
+    const payload = {
+      event: 'message:ack',
+      messageId: message.id?.id || message.id,
+      from: message.from,
+      fromNumber: message.from.replace('@c.us', '').replace('@g.us', '').replace('@lid', '').replace('@broadcast', ''),
+      ack: ack,
+      timestamp: new Date().toISOString(),
+      chatType: message.from.includes('@g.us') ? 'group' : (message.from.includes('@lid') ? 'lid' : 'private'),
+    };
+
+    await axios.post(config.webhook.forwardUrl, payload, {
+      timeout: 5000,
+    });
+    
+    console.log('Message ACK forwarded to webhook:', config.webhook.forwardUrl);
+  } catch (error) {
+    console.error('Error forwarding ACK to webhook:', error.message);
+  }
+};
+
+/**
  * Setup WhatsApp event listeners
  */
 const setupEventListeners = () => {
@@ -148,6 +177,9 @@ const setupEventListeners = () => {
       from: msg.from,
       ack: ack,
     });
+
+    // Forward ACK to webhook
+    forwardAckToWebhook(msg, ack);
   });
 
   // Listen for group changes
