@@ -38,55 +38,29 @@ const sendSendWebhookNotification = async (messageData, success = true, error = 
 const sendTextMessage = async (phoneNumber, message, options = {}) => {
   try {
     const client = getClient();
-    const chatId = `${phoneNumber}@c.us`;
     
-    // Prepare send options with all available features
-    const sendOptions = {
-      linkPreview: options.linkPreview !== false, // Show link preview by default
-      sendAudioAsVoice: options.sendAudioAsVoice || false,
-      sendVideoAsGif: options.sendVideoAsGif || false,
-      sendMediaAsSticker: options.sendMediaAsSticker || false,
-      sendMediaAsDocument: options.sendMediaAsDocument || false,
-      sendMediaAsHd: options.sendMediaAsHd || false,
-      isViewOnce: options.isViewOnce || false,
-      parseVCards: options.parseVCards !== false,
-      sendSeen: options.sendSeen !== false,
-      mentions: options.mentions || [],
-      groupMentions: options.groupMentions || [],
-      quotedMessageId: options.quotedMessageId || null,
-      invokedBotWid: options.invokedBotWid || null,
-      ignoreQuoteErrors: options.ignoreQuoteErrors !== false,
-      waitUntilMsgSent: options.waitUntilMsgSent || false,
-    };
+    // Format the chat ID
+    const chatId = phoneNumber.includes('@') ? phoneNumber : `${phoneNumber}@c.us`;
+    
+    console.log(`Attempting to send message to: ${chatId}`);
+    console.log(`Message: ${message}`);
 
-    const response = await client.sendMessage(chatId, message, sendOptions);
+    // Send with sendSeen disabled to avoid markedUnread error
+    const response = await client.sendMessage(chatId, message, {
+      sendSeen: false,  // Disable to prevent markedUnread error
+    });
     
     const responseData = {
       success: true,
       type: 'text',
       to: phoneNumber,
       chatId: chatId,
-      isGroup: false,
       
       // Message Details
-      messageId: response.id?.id || response.id,
+      messageId: response.id?._serialized || response.id,
       body: response.body,
       timestamp: response.timestamp,
-      
-      // Status & Metadata
-      ack: response.ack,
       fromMe: response.fromMe,
-      hasMedia: response.hasMedia,
-      deviceType: response.deviceType,
-      
-      // Send Options Used
-      sendOptions: {
-        linkPreview: sendOptions.linkPreview,
-        sendSeen: sendOptions.sendSeen,
-        parseVCards: sendOptions.parseVCards,
-        mentions: sendOptions.mentions.length > 0,
-        quotedMessage: !!sendOptions.quotedMessageId,
-      },
       
       // Timestamps
       sentAt: new Date().toISOString(),

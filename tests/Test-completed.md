@@ -41,3 +41,8 @@ send message to webhook
   "token": null,
   "deviceType": "android"
 }
+
+
+send messgae :\
+
+curl -X POST http://localhost:3000/webhook -H "Content-Type: application/json" -d '{"phoneNumber":"9476","message":"Test message"}'

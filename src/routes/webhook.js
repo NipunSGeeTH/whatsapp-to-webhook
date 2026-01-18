@@ -62,6 +62,14 @@ router.post('/webhook', async (req, res) => {
       });
     }
 
+    // Check if client is ready
+    if (!isClientReady()) {
+      return res.status(503).json({
+        error: 'WhatsApp client not ready',
+        details: 'Client is still initializing. Please wait and try again.',
+      });
+    }
+
     let response;
 
     // Send message based on type

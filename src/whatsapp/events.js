@@ -157,12 +157,19 @@ const setupEventListeners = () => {
   const client = getClient();
 
   // Listen for incoming messages
-  client.on('message', (msg) => {
+  client.on('message', async (msg) => {
     console.log('MESSAGE RECEIVED:', {
       from: msg.from,
       body: msg.body,
       timestamp: msg.timestamp,
     });
+
+    // Mark chat as seen (blue checkmark) - this prevents notifications on other devices
+    try {
+      await client.sendSeen(msg.from);
+    } catch (err) {
+      console.log('Could not send seen:', err.message);
+    }
 
     // Forward message to external webhook
     forwardMessageToWebhook(msg);
