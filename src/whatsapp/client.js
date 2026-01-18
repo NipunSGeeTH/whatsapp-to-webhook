@@ -1,5 +1,6 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const QRCode = require('qrcode');
+const path = require('path');
 const config = require('../config');
 
 let client = null;
@@ -10,8 +11,9 @@ const initializeWhatsApp = () => {
   return new Promise((resolve, reject) => {
     try {
       client = new Client({
-        auth: new LocalAuth({
+        authStrategy: new LocalAuth({
           clientId: config.whatsapp.sessionName,
+          dataPath: path.join(process.cwd(), '.wwebjs_auth'),
         }),
         puppeteer: config.whatsapp.puppeteer,
       });
@@ -33,8 +35,13 @@ const initializeWhatsApp = () => {
         currentQR = qr;
       });
 
+      client.on('authenticated', () => {
+        console.log('🔐 WhatsApp authenticated - session being saved...');
+      });
+
       client.on('ready', () => {
-        console.log('WhatsApp client is ready!');
+        console.log('✅ WhatsApp client is ready!');
+        console.log('📁 Session saved to:', path.join(process.cwd(), '.wwebjs_auth'));
         isReady = true;
         currentQR = null;
         resolve(client);

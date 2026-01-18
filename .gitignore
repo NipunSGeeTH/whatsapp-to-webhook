@@ -4,6 +4,7 @@ node_modules/
 
 # Session files
 .wwebjs_auth/
+.wwebjs_cache/
 whatsapp-session/
 
 # Environment variables
