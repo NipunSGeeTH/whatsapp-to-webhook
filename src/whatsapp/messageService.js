@@ -71,8 +71,8 @@ const sendTextMessage = async (phoneNumber, message, options = {}) => {
 
     console.log(`Message sent to ${phoneNumber}`);
     
-    // Send webhook notification if configured
-    await sendSendWebhookNotification(responseData);
+    // Webhook notification disabled - only forward incoming messages
+    // await sendSendWebhookNotification(responseData);
     
     return responseData;
   } catch (error) {
@@ -87,7 +87,8 @@ const sendTextMessage = async (phoneNumber, message, options = {}) => {
       errorMessage: error.message,
     };
     
-    await sendSendWebhookNotification(errorData, false, error.message);
+    // Webhook notification disabled - only forward incoming messages
+    // await sendSendWebhookNotification(errorData, false, error.message);
     throw error;
   }
 };
@@ -173,8 +174,8 @@ const sendMediaMessage = async (phoneNumber, mediaPath, caption = '', options = 
 
     console.log(`Media message sent to ${phoneNumber}`);
     
-    // Send webhook notification if configured
-    await sendSendWebhookNotification(responseData);
+    // Webhook notification disabled - only forward incoming messages
+    // await sendSendWebhookNotification(responseData);
     
     return responseData;
   } catch (error) {
@@ -189,7 +190,8 @@ const sendMediaMessage = async (phoneNumber, mediaPath, caption = '', options = 
       errorMessage: error.message,
     };
     
-    await sendSendWebhookNotification(errorData, false, error.message);
+    // Webhook notification disabled - only forward incoming messages
+    // await sendSendWebhookNotification(errorData, false, error.message);
     throw error;
   }
 };

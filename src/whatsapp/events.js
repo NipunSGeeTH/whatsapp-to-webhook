@@ -190,15 +190,13 @@ const setupEventListeners = () => {
     client.emit('message:received', msg);
   });
 
-  // Listen for message acknowledgments
+  // Listen for message acknowledgments (logging only, no webhook)
   client.on('message_ack', (msg, ack) => {
     console.log('MESSAGE ACK:', {
       from: msg.from,
       ack: ack,
     });
-
-    // Forward ACK to webhook
-    forwardAckToWebhook(msg, ack);
+    // ACK webhook disabled - only forward incoming messages
   });
 
   // Listen for group changes
