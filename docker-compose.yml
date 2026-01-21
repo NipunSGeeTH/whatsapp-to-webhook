@@ -11,8 +11,8 @@ services:
     env_file:
       - .env
     volumes:
-      # Persist WhatsApp authentication session
-      - whatsapp_auth:/app/.wwebjs_auth
+      # Persist WhatsApp authentication session - use bind mount for easier cleanup
+      - ./.wwebjs_auth:/app/.wwebjs_auth
       # Persist logs
       - ./logs:/app/logs
     restart: unless-stopped
@@ -42,6 +42,3 @@ services:
       retries: 3
       start_period: 40s
 
-volumes:
-  whatsapp_auth:
-    driver: local

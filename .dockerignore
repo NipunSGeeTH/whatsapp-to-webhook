@@ -61,8 +61,9 @@ tests
 *.test.js
 jest.config.js
 
-# Sessions (will be created in container)
-# .wwebjs_auth/
+# Sessions - excluded from build context (mounted via volume)
+.wwebjs_auth/
+.wwebjs_cache/
 
 # CI/CD
 .github

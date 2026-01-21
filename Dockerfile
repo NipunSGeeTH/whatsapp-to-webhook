@@ -35,12 +35,23 @@ COPY . .
 # Create directories for auth and logs
 RUN mkdir -p .wwebjs_auth logs
 
+# Create startup script to clean profile lock
+RUN echo '#!/bin/bash\n\
+find /app/.wwebjs_auth -name "SingletonLock" -delete 2>/dev/null || true\n\
+find /app/.wwebjs_auth -name "SingletonCookie" -delete 2>/dev/null || true\n\
+find /app/.wwebjs_auth -name "SingletonSocket" -delete 2>/dev/null || true\n\
+rm -rf /tmp/.org.chromium* /tmp/chromium* 2>/dev/null || true\n\
+exec "$@"' > /entrypoint.sh && chmod +x /entrypoint.sh
+
 # Expose port
 EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD node -e "require('http').get('http://localhost:3000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# Use entrypoint script to clean up before starting
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Start the application
 CMD ["pnpm", "start"]
