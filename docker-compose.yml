@@ -8,18 +8,11 @@ services:
     container_name: whatsapp-bot
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - WEBHOOK_PORT=3000
-      - WEBHOOK_PATH=/webhook
-      - VERIFY_TOKEN=${VERIFY_TOKEN:-your-verify-token}
-      - FORWARD_WEBHOOK_URL=${FORWARD_WEBHOOK_URL:-}
-      - LOG_LEVEL=${LOG_LEVEL:-info}
+    env_file:
+      - .env
     volumes:
       # Persist WhatsApp authentication session
       - whatsapp_auth:/app/.wwebjs_auth
-      # Mount .env file (optional, use environment variables above)
-      - .env:/app/.env
       # Persist logs
       - ./logs:/app/logs
     restart: unless-stopped

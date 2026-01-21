@@ -2,11 +2,8 @@ FROM node:18-bullseye
 
 # Install system dependencies for puppeteer and chromium
 RUN apt-get update && apt-get install -y \
-    chromium-browser \
-    chromium-codecs-ffmpeg \
+    chromium \
     libxss1 \
-    libappindicator1 \
-    libindicator7 \
     libnss3 \
     libgconf-2-4 \
     fonts-liberation \
@@ -14,8 +11,13 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     xdg-utils \
     wget \
+    ca-certificates \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
+
+# Set Puppeteer to use installed Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # Set working directory
 WORKDIR /app
