@@ -201,87 +201,87 @@ const sendMediaMessage = async (phoneNumber, mediaPath, caption = '', options = 
  * @param {object} options - Optional message send options
  * @returns {Promise<object>} - Detailed message response
  */
-const sendGroupMessage = async (groupId, message, options = {}) => {
-  try {
-    const client = getClient();
+// const sendGroupMessage = async (groupId, message, options = {}) => {
+//   try {
+//     const client = getClient();
     
-    // Prepare send options
-    const sendOptions = {
-      linkPreview: options.linkPreview !== false,
-      sendAudioAsVoice: options.sendAudioAsVoice || false,
-      sendVideoAsGif: options.sendVideoAsGif || false,
-      sendMediaAsSticker: options.sendMediaAsSticker || false,
-      sendMediaAsDocument: options.sendMediaAsDocument || false,
-      sendMediaAsHd: options.sendMediaAsHd || false,
-      isViewOnce: options.isViewOnce || false,
-      parseVCards: options.parseVCards !== false,
-      sendSeen: options.sendSeen !== false,
-      mentions: options.mentions || [],
-      groupMentions: options.groupMentions || [],
-      quotedMessageId: options.quotedMessageId || null,
-      invokedBotWid: options.invokedBotWid || null,
-      ignoreQuoteErrors: options.ignoreQuoteErrors !== false,
-      waitUntilMsgSent: options.waitUntilMsgSent || false,
-    };
+//     // Prepare send options
+//     const sendOptions = {
+//       linkPreview: options.linkPreview !== false,
+//       sendAudioAsVoice: options.sendAudioAsVoice || false,
+//       sendVideoAsGif: options.sendVideoAsGif || false,
+//       sendMediaAsSticker: options.sendMediaAsSticker || false,
+//       sendMediaAsDocument: options.sendMediaAsDocument || false,
+//       sendMediaAsHd: options.sendMediaAsHd || false,
+//       isViewOnce: options.isViewOnce || false,
+//       parseVCards: options.parseVCards !== false,
+//       sendSeen: options.sendSeen !== false,
+//       mentions: options.mentions || [],
+//       groupMentions: options.groupMentions || [],
+//       quotedMessageId: options.quotedMessageId || null,
+//       invokedBotWid: options.invokedBotWid || null,
+//       ignoreQuoteErrors: options.ignoreQuoteErrors !== false,
+//       waitUntilMsgSent: options.waitUntilMsgSent || false,
+//     };
     
-    const response = await client.sendMessage(groupId, message, sendOptions);
+//     const response = await client.sendMessage(groupId, message, sendOptions);
 
-    const responseData = {
-      success: true,
-      type: 'text',
-      groupId: groupId,
-      isGroup: true,
+//     const responseData = {
+//       success: true,
+//       type: 'text',
+//       groupId: groupId,
+//       isGroup: true,
       
-      // Message Details
-      messageId: response.id?.id || response.id,
-      body: response.body,
-      timestamp: response.timestamp,
+//       // Message Details
+//       messageId: response.id?.id || response.id,
+//       body: response.body,
+//       timestamp: response.timestamp,
       
-      // Status & Metadata
-      ack: response.ack,
-      fromMe: response.fromMe,
-      hasMedia: response.hasMedia,
-      deviceType: response.deviceType,
+//       // Status & Metadata
+//       ack: response.ack,
+//       fromMe: response.fromMe,
+//       hasMedia: response.hasMedia,
+//       deviceType: response.deviceType,
       
-      // Send Options Used
-      sendOptions: {
-        linkPreview: sendOptions.linkPreview,
-        sendSeen: sendOptions.sendSeen,
-        mentions: sendOptions.mentions.length > 0,
-        groupMentions: sendOptions.groupMentions.length > 0,
-        quotedMessage: !!sendOptions.quotedMessageId,
-      },
+//       // Send Options Used
+//       sendOptions: {
+//         linkPreview: sendOptions.linkPreview,
+//         sendSeen: sendOptions.sendSeen,
+//         mentions: sendOptions.mentions.length > 0,
+//         groupMentions: sendOptions.groupMentions.length > 0,
+//         quotedMessage: !!sendOptions.quotedMessageId,
+//       },
       
-      // Timestamps
-      sentAt: new Date().toISOString(),
+//       // Timestamps
+//       sentAt: new Date().toISOString(),
       
-      // Client Status
-      clientReady: isClientReady(),
-    };
+//       // Client Status
+//       clientReady: isClientReady(),
+//     };
 
-    console.log(`Group message sent to ${groupId}`);
+//     console.log(`Group message sent to ${groupId}`);
     
-    // Send webhook notification if configured
-    await sendSendWebhookNotification(responseData);
+//     // Send webhook notification if configured
+//     await sendSendWebhookNotification(responseData);
     
-    return responseData;
-  } catch (error) {
-    console.error(`Error sending group message:`, error.message);
+//     return responseData;
+//   } catch (error) {
+//     console.error(`Error sending group message:`, error.message);
     
-    const errorData = {
-      success: false,
-      type: 'text',
-      groupId: groupId,
-      isGroup: true,
-      clientReady: isClientReady(),
-      sentAt: new Date().toISOString(),
-      errorMessage: error.message,
-    };
+//     const errorData = {
+//       success: false,
+//       type: 'text',
+//       groupId: groupId,
+//       isGroup: true,
+//       clientReady: isClientReady(),
+//       sentAt: new Date().toISOString(),
+//       errorMessage: error.message,
+//     };
     
-    await sendSendWebhookNotification(errorData, false, error.message);
-    throw error;
-  }
-};
+//     await sendSendWebhookNotification(errorData, false, error.message);
+//     throw error;
+//   }
+// };
 
 /**
  * Send a message to multiple numbers
@@ -314,7 +314,6 @@ const sendBulkMessages = async (phoneNumbers, message) => {
 module.exports = {
   sendTextMessage,
   sendMediaMessage,
-  sendGroupMessage,
   sendBulkMessages,
   sendSendWebhookNotification,
 };

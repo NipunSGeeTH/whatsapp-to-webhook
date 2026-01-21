@@ -15,6 +15,18 @@ const forwardMessageToWebhook = async (message) => {
     const isGroupChat = message.from.includes('@g.us');
     const isBroadcast = message.broadcast || message.from.includes('@broadcast');
 
+    // Only forward messages from personal chats
+    if (isGroupChat || isBroadcast) {
+      console.log('Skipping group/broadcast message - webhook only for personal chats');
+      return;
+    }
+
+    // Skip status messages
+    if (message.isStatus) {
+      console.log('Skipping status message - webhook only for regular messages');
+      return;
+    }
+
     // Download media if available and not larger than 10MB
     let mediaData = null;
     const MAX_MEDIA_SIZE = 10 * 1024 * 1024; // 10MB in bytes
